@@ -6,9 +6,13 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
+import android.os.Process;
+import android.os.RemoteException;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.leova.ipcs.utils.MyUtils;
 
 import java.lang.ref.WeakReference;
 
@@ -40,7 +44,16 @@ public class MessengerService extends Service {
 
         @Override
         public void handleMessage(@NonNull Message msg) {
+            Messenger clentMessenger = msg.replyTo;
+            MessengerService messengerService = this.messengerService.get();
+            messengerService.sayHi("msgStr");
 
+            Message serviceMsg = Message.obtain();
+            try {
+                clentMessenger.send(serviceMsg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
 
         private void destory() {
@@ -49,6 +62,11 @@ public class MessengerService extends Service {
             }
             removeCallbacksAndMessages(null);
         }
+    }
+
+    public String sayHi(String str) {
+        String processName = MyUtils.getProcessName(this, Process.myPid());
+        return "收到客户端的" + str + ",你好我是进程 ： " + processName;
     }
 
     @Override

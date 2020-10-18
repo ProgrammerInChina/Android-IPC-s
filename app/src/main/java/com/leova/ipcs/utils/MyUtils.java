@@ -1,4 +1,4 @@
-package com.example.androiddemo;
+package com.leova.ipcs.utils;
 
 import android.app.ActivityManager;
 import android.content.Context;

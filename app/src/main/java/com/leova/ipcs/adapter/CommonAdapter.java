@@ -4,34 +4,27 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.leova.ipcs.bean.BaseBean;
 import com.leova.ipcs.holder.CommonHolder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CommonAdapter<T extends BaseBean> extends RecyclerView.Adapter<CommonHolder> {
 
-    @LayoutRes
-    private int mLayoutId;
+
     private List<T> mDatas;
-    private int mItemType;
+    private OnItemClicklistener onItemClicklistener;
 
     public CommonAdapter() {
-        this(0);
+        if (mDatas == null) {
+            mDatas = new ArrayList<>();
+        }
     }
 
-    public CommonAdapter(@LayoutRes int mLayoutId) {
-        this(mLayoutId, null);
-    }
-
-    public CommonAdapter(@LayoutRes int mLayoutId, List<T> mDatas) {
-        this.mLayoutId = mLayoutId;
-        this.mDatas = mDatas;
-    }
 
     @Override
     public int getItemViewType(int position) {
@@ -42,18 +35,41 @@ public class CommonAdapter<T extends BaseBean> extends RecyclerView.Adapter<Comm
         return Math.max(t.getType(), 0);
     }
 
+    public List<T> getDatas() {
+        return mDatas;
+    }
+
+
+    public void addDatas(List<T> datas) {
+        if (datas != null && !datas.isEmpty()) {
+            mDatas.addAll(datas);
+            notifyDataSetChanged();
+        }
+    }
+
+    public void addDataBean(T bean) {
+        if (bean != null) {
+            mDatas.add(bean);
+            notifyItemChanged(mDatas.size() - 1);
+        }
+    }
+
+    public void setOnItemClicklistener(OnItemClicklistener onItemClicklistener) {
+        this.onItemClicklistener = onItemClicklistener;
+    }
+
     @NonNull
     @Override
     public CommonHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View inflate = layoutInflater.inflate(mLayoutId, null, false);
-//        HolderFactory
-        return null;
+        CommonHolder holder = HolderFactory.createHolder(layoutInflater,
+                viewType, onItemClicklistener);
+        return holder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull CommonHolder holder, int position) {
-
+        holder.bind(mDatas.get(position), position);
     }
 
     @Override
@@ -61,32 +77,8 @@ public class CommonAdapter<T extends BaseBean> extends RecyclerView.Adapter<Comm
         return (mDatas != null && !mDatas.isEmpty()) ? mDatas.size() : 0;
     }
 
-    class Builder {
-        @LayoutRes
-        private int layoutId;
-        private List<T> datas;
-        private int itemType;
-
-        public CommonAdapter<T> build() {
-            mLayoutId = layoutId;
-            mDatas = datas;
-            mItemType = itemType;
-            return CommonAdapter.this;
-        }
-
-        public Builder setLayoutId(@LayoutRes int layoutId) {
-            this.layoutId = layoutId;
-            return this;
-        }
-
-        public Builder setDatas(List<T> datas) {
-            this.datas = datas;
-            return this;
-        }
-
-        public Builder setItemType(int itemType) {
-            this.itemType = itemType;
-            return this;
-        }
+    public interface OnItemClicklistener {
+        void onItemClick(View view, int position);
     }
+
 }
