@@ -3,6 +3,7 @@ package com.leova.ipcs.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
+import android.util.Log;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +25,8 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 public class MainActivity extends AppCompatActivity implements NotifyCallback {
+
+    private static final String TAG = "MainActivity";
 
     @BindView(R.id.rlv_tab_list)
     RecyclerView mTabRecyclerView;
@@ -83,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements NotifyCallback {
             transaction.commit();
             mCurrentFragment = tabContentFragment;
         }
+        Log.e(TAG, "call changePage method" );
     }
 
     @Override
